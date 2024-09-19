@@ -7,3 +7,4 @@ qdrant-client
 langchain_huggingface
 python-dotenv
 langchain-openai
+bs4
