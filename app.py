@@ -22,8 +22,9 @@ import json
 import os
 load_dotenv()
 
-os.environ["OPENAI_API_KEY"] = os.getenv('OPENAI_API_KEY')
-os.environ["QDRANT_API_KEY"] = os.getenv('QDRANT_API_KEY')
+# Use Streamlit secrets to access API keys
+openai_api_key = st.secrets["OPENAI_API_KEY"]
+qdrant_api_key = st.secrets["QDRANT_API_KEY"]
 from bs4 import BeautifulSoup
 import requests
 
@@ -101,7 +102,7 @@ def get_vector_store_from_url(url):
         document_chunks,
         embedding,
         url = qdrant_url,
-        api_key = os.getenv("QDRANT_API_KEY"),
+        api_key = qdrant_api_key,
         collection_name="WebsiteQA - RAG"
     )
     
@@ -110,6 +111,7 @@ def get_vector_store_from_url(url):
 def get_context_retriever_chain(vector_store):
     llm = ChatOpenAI(
         model = "gpt-4o-mini",
+        openai_api_key=openai_api_key
         )
     retriever = vector_store.as_retriever()
     prompt = ChatPromptTemplate.from_messages([
@@ -124,6 +126,7 @@ def get_context_retriever_chain(vector_store):
 def get_conversational_chain(retriever_chain):
     llm = ChatOpenAI(
         model = "gpt-4o-mini",
+        openai_api_key=openai_api_key
         )
     prompt = ChatPromptTemplate.from_messages([
         ("system", """The user asked a question based on the following context extracted from the 
